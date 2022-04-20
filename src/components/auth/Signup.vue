@@ -6,23 +6,31 @@
         </div>
         <div class="signup__content">
             <p class="signup__title">Sign up with your email address</p>
-            <Form class="form" @submit="handleRegister" :validation-schema="schema">
+            <form class="form" @submit.prevent="handleRegister">
                 <div>
-                    <label for="email" class="form__label">What is your email?</label>
-                    <Field name="email" type="email" placeholder="Email" class="form__input" :class="(message !='') ? 'form__input--error' : ''" />
-                    <ErrorMessage name="email" class="error-feedback" />
+                    <label class="form__label">What is your email?</label>
+                    <input type="text" placeholder="Email" class="form__input" :class="message ? 'form__input--error' : ''" v-model="user.email" required/>
+                    <div class="error-block" v-if="message">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 0.9375C3.87598 0.9375 0.9375 3.87598 0.9375 7.5C0.9375 11.124 3.87598 14.0625 7.5 14.0625C11.124 14.0625 14.0625 11.124 14.0625 7.5C14.0625 3.87598 11.124 0.9375 7.5 0.9375ZM7.03125 4.33594C7.03125 4.27148 7.08398 4.21875 7.14844 4.21875H7.85156C7.91602 4.21875 7.96875 4.27148 7.96875 4.33594V8.32031C7.96875 8.38477 7.91602 8.4375 7.85156 8.4375H7.14844C7.08398 8.4375 7.03125 8.38477 7.03125 8.32031V4.33594ZM7.5 10.7812C7.316 10.7775 7.14081 10.7018 7.01202 10.5703C6.88322 10.4389 6.81108 10.2622 6.81108 10.0781C6.81108 9.89409 6.88322 9.71739 7.01202 9.58594C7.14081 9.45448 7.316 9.37876 7.5 9.375C7.684 9.37876 7.85919 9.45448 7.98798 9.58594C8.11678 9.71739 8.18892 9.89409 8.18892 10.0781C8.18892 10.2622 8.11678 10.4389 7.98798 10.5703C7.85919 10.7018 7.684 10.7775 7.5 10.7812Z" fill="#EC4F4F"/>
+                        </svg>
+                        <span>Please enter valid email</span>
+                    </div>
                 </div>
                 <div>
-                    <label for="password" class="form__label">Create a password</label>
-                    <Field name="password" type="password" class="form__input" :class="message ? 'form__input--error' : ''"/>
-                    <ErrorMessage name="password" class="error-feedback" />
+                    <label style="margin-top:25px" class="form__label" title="Password should contain at least one numeric digit, one uppercase and lowercase letter. Minimum length is 8">Create a password</label>
+                    <input type="password" placeholder="Create a password" class="form__input" :class="message ? 'form__input--error' : ''" v-model="user.password" required/>
+                    <div class="error-block" v-if="message">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 0.9375C3.87598 0.9375 0.9375 3.87598 0.9375 7.5C0.9375 11.124 3.87598 14.0625 7.5 14.0625C11.124 14.0625 14.0625 11.124 14.0625 7.5C14.0625 3.87598 11.124 0.9375 7.5 0.9375ZM7.03125 4.33594C7.03125 4.27148 7.08398 4.21875 7.14844 4.21875H7.85156C7.91602 4.21875 7.96875 4.27148 7.96875 4.33594V8.32031C7.96875 8.38477 7.91602 8.4375 7.85156 8.4375H7.14844C7.08398 8.4375 7.03125 8.38477 7.03125 8.32031V4.33594ZM7.5 10.7812C7.316 10.7775 7.14081 10.7018 7.01202 10.5703C6.88322 10.4389 6.81108 10.2622 6.81108 10.0781C6.81108 9.89409 6.88322 9.71739 7.01202 9.58594C7.14081 9.45448 7.316 9.37876 7.5 9.375C7.684 9.37876 7.85919 9.45448 7.98798 9.58594C8.11678 9.71739 8.18892 9.89409 8.18892 10.0781C8.18892 10.2622 8.11678 10.4389 7.98798 10.5703C7.85919 10.7018 7.684 10.7775 7.5 10.7812Z" fill="#EC4F4F"/>
+                        </svg>
+                        <span>Please enter valid password</span>
+                    </div>
                 </div>
                 <div>
-                    <label for="name" class="form__label">What should we call you?</label>
-                    <Field name="name" type="text" class="form__input" />
-                    <ErrorMessage name="username" class="error-feedback" />
+                    <label style="margin-top:25px" class="form__label">What should we call you?</label>
+                    <input type="text" placeholder="Enter a profile name" class="form__input" v-model="user.name" required/>
                 </div>
-                
                 <div>
                     <label style="margin-top:25px" class="form__label">Date of birth</label>
                     <div class="date flex flex--space">
@@ -48,9 +56,9 @@
                 <div> 
                     <label style="margin-top:25px" class="form__label">What is your gender?</label>
                     <div class="radio">
-                        <input type="radio" id="gender_option_male" name="gender" required="" value="M" aria-invalid="false" class="radio__input" v-model="user.gender" />
+                        <input type="radio" id="gender_option_male" name="gender" required="" value="M" aria-invalid="false" class="radio__input" v-model="user.gender">
                         <label for="gender_option_male" class="radio__label">Male</label>
-                        <input type="radio" id="gender_option_female" name="gender" required="" value="F" aria-invalid="false" class="radio__input" v-model="user.gender" />
+                        <input type="radio" id="gender_option_female" name="gender" required="" value="F" aria-invalid="false" class="radio__input" v-model="user.gender">
                         <label for="gender_option_female" class="radio__label">Female</label>
                     </div>
                 </div>
@@ -58,10 +66,7 @@
                     <input v-model="isTermChecked" type="checkbox" required class="terms__input" />
                     <label class="terms__label">I agree with the <router-link to="/terms" class="terms__link">user terms</router-link></label>
                 </div>
-                <Button class="signup__btn" type="fill" :disabled="!isTermChecked">
-                    Sign up
-                </Button>
-
+                <Button class="signup__btn" type="fill" :disabled="!isTermChecked">Sign up for Tyñda</Button>
                 <div class="another">
                     <span>OR</span>
                     <button class="link">
@@ -74,67 +79,18 @@
                         </svg>
                     </button>
                 </div>
-            </Form>
+            </form>
         </div> 
     </div>
-  <!-- <div class="col-md-12">
-    <div class="card card-container">
-      <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
-      />
-      <Form @submit="handleRegister" :validation-schema="schema">
-        <div v-if="!successful">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <Field name="username" type="text" class="form-control" />
-            <ErrorMessage name="username" class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <Field name="email" type="email" class="form-control" />
-            <ErrorMessage name="email" class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <Field name="password" type="password" class="form-control" />
-            <ErrorMessage name="password" class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <button class="btn btn-primary btn-block" :disabled="loading">
-              <span
-                v-show="loading"
-                class="spinner-border spinner-border-sm"
-              ></span>
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </Form>
-      <div
-        v-if="message"
-        class="alert"
-        :class="successful ? 'alert-success' : 'alert-danger'"
-      >
-        {{ message }}
-      </div>
-    </div>
-  </div> -->
 </template>
-<script>
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
 
+<script>
 import Logo from "@/components/common/Logo.vue";
 import Button from "@/components/common/Button.vue";
 
 export default {
   name: "Signup",
   components: {
-    Form,
-    Field,
-    ErrorMessage,
     Logo,
     Button
   },
@@ -151,23 +107,10 @@ export default {
         gender: ""
     };
     const isTermChecked = false;
-    const schema = yup.object().shape({
-      email: yup
-        .string()
-        .required("Email is required!")
-        .email("Email is invalid!")
-        .max(50, "Must be maximum 50 characters!"),
-      password: yup
-        .string()
-        .required("Password is required!")
-        .min(6, "Must be at least 6 characters!")
-        .max(40, "Must be maximum 40 characters!"),
-    });
     return {
       successful: false,
       loading: false,
       message: "",
-      schema,
       user,
       isTermChecked
     };
@@ -182,7 +125,45 @@ export default {
       this.$router.push("/profile");
     }
   },
+  
   methods: {
+  passwordValidation() {
+    let passwordFormat = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+    if(this.user.password.match(passwordFormat)) {
+        return true;
+    } else {
+        // this.inputError.password = true;
+        return false;
+    }
+  },
+
+  emailValidation() {
+    // let emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // if(this.user.email.match(emailFormat)) {
+    //     return true;
+    // } else {
+    //     // this.inputError.email = true;
+    //     return false;
+    // }
+  },
+
+  handleSubmit() {
+    let passVal = this.passwordValidation();
+    let emailVal = this.emailValidation();
+    console.log(this.user.date)
+    console.log(this.user.gender);
+    if(passVal && emailVal) {
+        this.user.date = this.convertDateFormat(this.user.date);
+        this.register(this.user);
+        if(this.isLoggedIn) {
+            this.$router.push("/login");
+        } 
+    }    
+  },
+
+  submitForm() {
+    this.handleSubmit();
+  },
     convertDateFormat(date) {
         return `${date.day}.${date.month}.${date.year}`
     },
@@ -219,6 +200,7 @@ export default {
         height: 140px;
     }
     &__title {
+        text-align: center;
         margin: 0;
         font-weight: 500;
         font-size: 20px;
@@ -260,9 +242,15 @@ select {
     &__input {
         height: 19px;
         width: 19px;
+        &:hover {
+          cursor: pointer;
+        }
     }
     &__label {
         margin: 0 25px 0 15px;
+        &:hover {
+          cursor: pointer;
+        }
     }
 }
 .terms {
@@ -292,11 +280,11 @@ select {
         text-align: center;
     }
 }
-.error-block {
+.error-feedback {
     color: red;
     margin: 7px 0 25px;
     span {
-        font-size: 13px !important;
+      font-size: 14px !important;
     }
 }
 </style>

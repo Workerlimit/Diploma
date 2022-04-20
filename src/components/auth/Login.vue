@@ -13,17 +13,14 @@
                 <span class="error-box__text">Invalid password or username</span>
             </div>
             <Form class="form" @submit="handleLogin" :validation-schema="schema">
-            <!-- <form  ref="form" @submit.prevent="submitForm"> -->
                 <div>
                     <label for="email" class="form__label" >Email or username</label>
-                    <!-- <input type="text" placeholder="Email or username" class="form__input" v-model="user.email" required/> -->
-                    <Field name="email" type="text" class="form__input" />
+                    <Field name="email" type="text" placeholder="Email or username" class="form__input" />
                     <ErrorMessage name="email" class="error-feedback" />
                 </div>
                 <div>
                     <label for="password" style="margin-top:25px" class="form__label">Password</label>
-                    <!-- <input type="password" placeholder="Password" class="form__input" v-model="user.password" required/> -->
-                    <Field name="password" type="password" class="form__input" />
+                    <Field name="password" type="password" placeholder="Password" class="form__input" />
                     <ErrorMessage name="password" class="error-feedback" />
                 </div>
                 <div style="margin-top:25px" class="form__btn flex flex--space">
@@ -57,42 +54,6 @@
             </router-link>
         </div>
     </div>
-
-  <!-- <div class="col-md-12">
-    <div class="card card-container">
-      <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
-      />
-      <Form @submit="handleLogin" :validation-schema="schema">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <Field name="username" type="text" class="form-control" />
-          <ErrorMessage name="username" class="error-feedback" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <Field name="password" type="password" class="form-control" />
-          <ErrorMessage name="password" class="error-feedback" />
-        </div>
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" :disabled="loading">
-            <span
-              v-show="loading"
-              class="spinner-border spinner-border-sm"
-            ></span>
-            <span>Login</span>
-          </button>
-        </div>
-        <div class="form-group">
-          <div v-if="message" class="alert alert-danger" role="alert">
-            {{ message }}
-          </div>
-        </div>
-      </Form>
-    </div>
-  </div> -->
 </template>
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -112,8 +73,14 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      email: yup.string().required("Email is required!"),
-      password: yup.string().required("Password is required!"),
+      email: yup.string()
+        .required("Email is required!")
+        .email("Email is invalid!")
+        .max(50, "Must be maximum 50 characters!"),
+      password: yup.string()
+        .required("Password is required!")
+        .min(8, "Password should contain at least one numeric digit, and lowercase letter. Minimum length is 8")
+        .max(40, "Must be maximum 40 characters!"),
     });
     return {
       loading: false,
