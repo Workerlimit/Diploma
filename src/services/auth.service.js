@@ -19,21 +19,6 @@ class AuthService {
   logout() {
     localStorage.removeItem('user');
   }
-  async register(email, name, date, gender, password) {
-    await axios.post(API_URL + 'sign-up/', {
-      email: email,
-      name: name,  
-      date_of_birth: date,
-      gender: gender,
-      password: password,
-      "re_password": password,
-    })
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      return error;
-    })
-  }
+  
 }
 export default new AuthService();

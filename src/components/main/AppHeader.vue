@@ -6,7 +6,7 @@
                 <SearchField />
             </div>
             <div class="col col--btns flex flex--space">
-                <Button type="outline" @click="logout()"> Logout</Button>
+                <Button v-if="isLoggedIn" type="outline" @click="logout()"> Logout</Button>
                 <router-link v-if="isLoggedIn" to="/profile">
                     <div class="user">
                         <span class="user__name">{{ userInfo.name }}</span>

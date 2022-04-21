@@ -6,25 +6,25 @@
         </div>
         <div class="signup__content">
             <p class="signup__title">Sign up with your email address</p>
-            <form class="form" @submit.prevent="handleRegister">
+            <form class="form" @submit.prevent="submitForm">
                 <div>
                     <label class="form__label">What is your email?</label>
-                    <input type="text" placeholder="Email" class="form__input" :class="message ? 'form__input--error' : ''" v-model="user.email" required/>
-                    <div class="error-block" v-if="message">
+                    <input type="text" placeholder="Email" class="form__input" :class="inputError.email != '' ? 'form__input--error' : ''" v-model="user.email" @input="() => inputError.email=''" required/>
+                    <div class="error-block" v-if="inputError.email != ''">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7.5 0.9375C3.87598 0.9375 0.9375 3.87598 0.9375 7.5C0.9375 11.124 3.87598 14.0625 7.5 14.0625C11.124 14.0625 14.0625 11.124 14.0625 7.5C14.0625 3.87598 11.124 0.9375 7.5 0.9375ZM7.03125 4.33594C7.03125 4.27148 7.08398 4.21875 7.14844 4.21875H7.85156C7.91602 4.21875 7.96875 4.27148 7.96875 4.33594V8.32031C7.96875 8.38477 7.91602 8.4375 7.85156 8.4375H7.14844C7.08398 8.4375 7.03125 8.38477 7.03125 8.32031V4.33594ZM7.5 10.7812C7.316 10.7775 7.14081 10.7018 7.01202 10.5703C6.88322 10.4389 6.81108 10.2622 6.81108 10.0781C6.81108 9.89409 6.88322 9.71739 7.01202 9.58594C7.14081 9.45448 7.316 9.37876 7.5 9.375C7.684 9.37876 7.85919 9.45448 7.98798 9.58594C8.11678 9.71739 8.18892 9.89409 8.18892 10.0781C8.18892 10.2622 8.11678 10.4389 7.98798 10.5703C7.85919 10.7018 7.684 10.7775 7.5 10.7812Z" fill="#EC4F4F"/>
                         </svg>
-                        <span>Please enter valid email</span>
+                        <span>{{ inputError.email }}</span>
                     </div>
                 </div>
                 <div>
                     <label style="margin-top:25px" class="form__label" title="Password should contain at least one numeric digit, one uppercase and lowercase letter. Minimum length is 8">Create a password</label>
-                    <input type="password" placeholder="Create a password" class="form__input" :class="message ? 'form__input--error' : ''" v-model="user.password" required/>
-                    <div class="error-block" v-if="message">
+                    <input type="password" placeholder="Create a password" class="form__input" :class="inputError.password != '' ? 'form__input--error' : ''" v-model="user.password" @input="() => inputError.password=''" required/>
+                    <div class="error-block" v-if="inputError.password != ''">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7.5 0.9375C3.87598 0.9375 0.9375 3.87598 0.9375 7.5C0.9375 11.124 3.87598 14.0625 7.5 14.0625C11.124 14.0625 14.0625 11.124 14.0625 7.5C14.0625 3.87598 11.124 0.9375 7.5 0.9375ZM7.03125 4.33594C7.03125 4.27148 7.08398 4.21875 7.14844 4.21875H7.85156C7.91602 4.21875 7.96875 4.27148 7.96875 4.33594V8.32031C7.96875 8.38477 7.91602 8.4375 7.85156 8.4375H7.14844C7.08398 8.4375 7.03125 8.38477 7.03125 8.32031V4.33594ZM7.5 10.7812C7.316 10.7775 7.14081 10.7018 7.01202 10.5703C6.88322 10.4389 6.81108 10.2622 6.81108 10.0781C6.81108 9.89409 6.88322 9.71739 7.01202 9.58594C7.14081 9.45448 7.316 9.37876 7.5 9.375C7.684 9.37876 7.85919 9.45448 7.98798 9.58594C8.11678 9.71739 8.18892 9.89409 8.18892 10.0781C8.18892 10.2622 8.11678 10.4389 7.98798 10.5703C7.85919 10.7018 7.684 10.7775 7.5 10.7812Z" fill="#EC4F4F"/>
                         </svg>
-                        <span>Please enter valid password</span>
+                        <span>{{ inputError.password }}</span>
                     </div>
                 </div>
                 <div>
@@ -34,8 +34,8 @@
                 <div>
                     <label style="margin-top:25px" class="form__label">Date of birth</label>
                     <div class="date flex flex--space">
-                        <input placeholder="DD" class="form__input date__item" inputmode="numeric" maxlength="2" pattern="((0?[1-9])|([12][0-9])|(3[01]))" v-model="user.date.day" required/>
-                        <select name="month" required="" aria-invalid="true" class="form__input date__item" v-model="user.date.month">
+                        <input placeholder="DD" class="form__input date__item" inputmode="numeric" maxlength="2" pattern="((0?[1-9])|([12][0-9])|(3[01]))" v-model="day" required/>
+                        <select name="month" required="" aria-invalid="true" class="form__input date__item" v-model="month">
                             <option selected="" disabled="" value="">Month</option>
                             <option value="01">January</option>
                             <option value="02">February</option>
@@ -50,7 +50,7 @@
                             <option value="11">November</option>
                             <option value="12">December</option>
                         </select>
-                        <input placeholder="YYYY" class="form__input date__item" inputmode="numeric" maxlength="4"  v-model="user.date.year" required />
+                        <input placeholder="YYYY" class="form__input date__item" inputmode="numeric" maxlength="4" pattern="\d{4}" v-model="year" required />
                     </div>
                 </div>
                 <div> 
@@ -63,8 +63,8 @@
                     </div>
                 </div>
                 <div class="terms flex">
-                    <input v-model="isTermChecked" type="checkbox" required class="terms__input" />
-                    <label class="terms__label">I agree with the <router-link to="/terms" class="terms__link">user terms</router-link></label>
+                    <input id="terms" v-model="isTermChecked" type="checkbox" required class="terms__input" />
+                    <label for="terms" class="terms__label">I agree with the <router-link to="/terms" class="terms__link">user terms</router-link></label>
                 </div>
                 <Button class="signup__btn" type="fill" :disabled="!isTermChecked">Sign up for Tyñda</Button>
                 <div class="another">
@@ -87,6 +87,7 @@
 <script>
 import Logo from "@/components/common/Logo.vue";
 import Button from "@/components/common/Button.vue";
+import axios from "axios";
 
 export default {
   name: "Signup",
@@ -94,30 +95,41 @@ export default {
     Logo,
     Button
   },
-  data() {
-    const user = { 
-        email: "", 
-        password: "", 
-        name: "", 
-        date: { 
-            day: "", 
-            month: "", 
-            year: "" 
-        }, 
-        gender: ""
-    };
-    const isTermChecked = false;
+  data: function() {
     return {
       successful: false,
       loading: false,
-      message: "",
-      user,
-      isTermChecked
+      isTermChecked: false,
+      user: { 
+        email: "", 
+        password: "", 
+        name: "", 
+        date: "", 
+        gender: ""
+      },
+      day: "", 
+      month: "", 
+      year: "",
+      inputError: {
+        email: "",
+        password: "",
+      }
     };
   },
+  watch: {
+    email(value) {
+        this.user.email = value;
+        this.emailValidation(value);
+    }
+  },
   computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
+    loggedIn: {
+      get: function() {
+        return this.$store.getters['auth/getLogged'];
+      },
+      set: function(newVal) {
+        this.loggedIn = newVal;
+      }
     },
   },
   mounted() {
@@ -127,70 +139,61 @@ export default {
   },
   
   methods: {
-  passwordValidation() {
-    let passwordFormat = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-    if(this.user.password.match(passwordFormat)) {
-        return true;
-    } else {
-        // this.inputError.password = true;
-        return false;
-    }
-  },
-
-  emailValidation() {
-    // let emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    // if(this.user.email.match(emailFormat)) {
-    //     return true;
-    // } else {
-    //     // this.inputError.email = true;
-    //     return false;
-    // }
-  },
-
-  handleSubmit() {
-    let passVal = this.passwordValidation();
-    let emailVal = this.emailValidation();
-    console.log(this.user.date)
-    console.log(this.user.gender);
-    if(passVal && emailVal) {
-        this.user.date = this.convertDateFormat(this.user.date);
-        this.register(this.user);
-        if(this.isLoggedIn) {
-            this.$router.push("/login");
-        } 
-    }    
-  },
-
-  submitForm() {
-    this.handleSubmit();
-  },
-    convertDateFormat(date) {
-        return `${date.day}.${date.month}.${date.year}`
-    },
-    handleRegister(user) {
-      this.message = "";
-      this.successful = false;
-      this.loading = true;
-      this.user.date = this.convertDateFormat(this.user.date);
-        console.log(user.gender)
-      this.$store.dispatch("auth/register", user).then(
-        (data) => {
-          this.message = data.message;
-          this.successful = true;
-          this.loading = false;
-        },
-        (error) => {
-          this.message =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          this.successful = false;
-          this.loading = false;
+    passwordValidation() {
+        let passwordFormat = /^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/;
+        if(this.user.password.match(passwordFormat)) {
+            return true;
+        } else {
+            this.inputError.password = "Password should contain at least one numeric digit, and lowercase letter. Minimum length is 8";
+            return false;
         }
-      );
     },
+    emailValidation() {
+        let emailFormat = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+        if(this.user.email.match(emailFormat)) {
+            return true;
+        } else {
+            this.inputError.email = "Please enter valid email";
+            return false;
+        }
+    },
+    async register(email, password, name, date, gender) {
+      const body = {
+        email: email,
+        name: name,  
+        "date_of_birth": date,
+        gender: gender,
+        password: password,
+        "re_password": password,
+      }
+      await axios.post('http://localhost:8000/sign-up/', body)
+      .then(response => {
+        this.loggedIn = true;
+        return response;
+      })
+      .catch(error => {
+        this.inputError.email = error.response.data.email[0];
+        this.loggedIn = false;
+        return error.response.data;
+      })
+    },
+    convertDateFormat(day, month, year) {
+      return `${day}.${month}.${year}`
+    },
+    submitForm() {
+        let passVal = this.passwordValidation();
+        let emailVal = this.emailValidation();
+        if(passVal && emailVal) {
+            this.user.date = this.convertDateFormat(this.day, this.month, this.year);
+            
+            this.register(this.user.email, this.user.password, this.user.name, this.user.date, this.user.gender)
+            console.log(this.loggedIn)
+
+            if(this.loggedIn) {
+              this.$router.push("/login");
+            }
+        } 
+    }
   },
 };
 </script>
@@ -280,11 +283,12 @@ select {
         text-align: center;
     }
 }
-.error-feedback {
+.error-block {
     color: red;
     margin: 7px 0 25px;
     span {
       font-size: 14px !important;
+      margin-left: 5px;
     }
 }
 </style>

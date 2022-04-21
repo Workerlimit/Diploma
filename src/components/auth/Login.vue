@@ -75,11 +75,11 @@ export default {
     const schema = yup.object().shape({
       email: yup.string()
         .required("Email is required!")
-        .email("Email is invalid!")
+        .email("Please enter valid email")
         .max(50, "Must be maximum 50 characters!"),
       password: yup.string()
         .required("Password is required!")
-        .min(8, "Password should contain at least one numeric digit, and lowercase letter. Minimum length is 8")
+        .min(8, "Please enter valid password")
         .max(40, "Must be maximum 40 characters!"),
     });
     return {
