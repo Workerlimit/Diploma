@@ -4,6 +4,7 @@
             <img :src="item.img" />
         </div>
         <p class="artist__name"> {{ item.name }} </p> 
+        {{item.img}}
     </div>
 </template>
 
@@ -23,7 +24,6 @@ export default {
         width: 100%;
         height: 200px;
         border-radius: 100%;
-        background: $gray;
     }
     &__name {
         font-size: 22px;

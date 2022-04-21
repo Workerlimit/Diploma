@@ -68,3 +68,15 @@ li {
     line-height: 63px;
     margin-left: 15px;
 }
+.see-all-btn {
+    border: none;
+    outline: none;
+    background: inherit;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 23px;
+    color: #A9A9A9;
+    &:hover {
+        cursor: pointer;
+    }
+}

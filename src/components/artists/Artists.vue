@@ -1,11 +1,11 @@
 <template>
-    <div class="artists">
+    <div class="artists" >
         <Artist  v-for="item in artists" :key="item.id" :item="item"/>
     </div>
 </template>
 
 <script>
-import Artist from "./components/Artist.vue";
+import Artist from "./Artist.vue";
 
 export default {
     name: "Artists",
@@ -17,47 +17,47 @@ export default {
         artists: [
         {
             id: 1, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 2, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 3, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 4, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 5, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 6, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 7, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 8, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         },
         {
             id: 9, 
-            img: "",
+            img: "@/assets/images/artist/artist-cover.jpg",
             name: "Name",
         }
     ]   
@@ -71,7 +71,7 @@ export default {
     // max-width: 1620px;
     display: flex;
     flex-wrap: wrap;
-    column-gap: 35px;
+    column-gap: 80px;
     row-gap: 75px;
 }
 </style>

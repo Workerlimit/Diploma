@@ -62,6 +62,9 @@ export default {
 
 <style lang="scss">
 .navigation {
+    position: fixed;
+    left: 0;
+    top: 0;
     min-width: 220px;
     height: 100vh;
     background: $light-gray;

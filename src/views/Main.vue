@@ -2,7 +2,7 @@
     <div class="main">
       <div class="main__content">
         <NavigationDrawer />
-        <div style="width:100%">
+        <div style="width: auto; margin-left: 220px;">
           <AppHeader />
           <router-view></router-view>
         </div>
