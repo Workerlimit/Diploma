@@ -12,56 +12,16 @@ export default {
     components:{
         Artist,
     },
-    data(){
-        return {
-        artists: [
-        {
-            id: 1, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 2, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 3, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 4, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 5, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 6, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 7, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 8, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
-        },
-        {
-            id: 9, 
-            img: "@/assets/images/artist/artist-cover.jpg",
-            name: "Name",
+    computed: {
+        artists: {
+            get: function() {
+                return this.$store.getters['artist/getArtist']
+            }
         }
-    ]   
-    }}
+    },
+    mounted() {
+        this.$store.dispatch('artist/fetchArtist')
+    }
 }
 </script>
 
@@ -69,9 +29,12 @@ export default {
 .artists{
     width: 100%;
     // max-width: 1620px;
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 80px;
-    row-gap: 75px;
+    // display: flex;
+    // flex-wrap: wrap;
+    // column-gap: 80px;
+    // row-gap: 75px;
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    grid-gap: 35px;
 }
 </style>

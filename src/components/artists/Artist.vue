@@ -1,10 +1,9 @@
 <template>
     <div class="artist">
         <div class="artist__img">
-            <img :src="item.img" />
+            <img :src="item.avatar" />
         </div>
         <p class="artist__name"> {{ item.name }} </p> 
-        {{item.img}}
     </div>
 </template>
 
@@ -24,8 +23,15 @@ export default {
         width: 100%;
         height: 200px;
         border-radius: 100%;
+        overflow: hidden;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
     &__name {
+        text-align: center;
         font-size: 22px;
         line-height: 26px;
         margin: 27px 0;

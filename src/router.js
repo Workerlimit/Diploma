@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter } from "vue-router";
-import Home from "./components/Home.vue";
+import Home from "./views/Home.vue";
 import Main from "./views/Main.vue";
 
 const routes = [
@@ -13,23 +13,49 @@ const routes = [
         name: "Home",
         component: Home,
       },
-      // {
-      //   path: "/library",
-      //   name: "Library",
-      //   meta: { 
-      //     requiresAuth: true,
-      //   },
-      //   component: () =>
-      //     import("@/views/Library.vue"),
-      // },
       {
-        path: "/profile",
-        name: "Profile",
-        meta: { 
+        path: "/playlist/:id/details",
+        name: "PLaylistDetail",
+        meta: {
+          requiresAuth: true,
+        },
+        props: true,
+        component: () =>
+          import("@/components/playlists/PlaylistDetail.vue"),
+      },
+      {
+        path: "/albums/:id/details",
+        name: "AlbumDetail",
+        props: true,
+        component: () =>
+          import("@/components/albums/AlbumDetail.vue"),
+      },
+      {
+        path: "/library",
+        name: "Library",
+        meta: {
           requiresAuth: true,
         },
         component: () =>
-          import("@/components/Profile.vue"),
+          import("@/views/Library.vue"),
+      },
+      {
+        path: "/liked",
+        name: "Liked",
+        meta: {
+          requiresAuth: true,
+        },
+        component: () =>
+          import("@/components/liked/Liked.vue"),
+      },
+      {
+        path: "/profile",
+        name: "Profile",
+        meta: {
+          requiresAuth: true,
+        },
+        component: () =>
+          import("@/views/Profile.vue"),
       },
     ]
   },
@@ -45,7 +71,12 @@ const routes = [
     component: () =>
       import("@/components/auth/Signup.vue"),
   },
-  
+  {
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: () =>
+      import("@/views/ResetPassword.vue")
+  }
 ];
 
 const router = createRouter({
@@ -54,13 +85,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const publicPages = ['/login', '/signup', '/'];
-    const authRequired = !publicPages.includes(to.path);
-    const loggedIn = localStorage.getItem('user');
-    if (authRequired && !loggedIn) {
-      next('/login');
-    } else {
-      next();
-    }
-  });
+  const publicPages = ['/login', '/signup', '/', '/reset-password'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('user');
+  if (authRequired && loggedIn == null) {
+    return next({
+      path: "/login",
+    });
+  } else {
+    next();
+  }
+});
 export default router;

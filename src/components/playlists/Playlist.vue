@@ -1,18 +1,16 @@
 <template>
-    <router-link :to="{ name: 'AlbumDetail', params: { id: 1 }}">
-        <div class="album">
-            <div class="album__img">
-                <img :src="item.cover" />
-            </div>
-            <p class="album__name"> {{ item }} </p> 
-            <p class="album__desc">{{ item.desc }}</p>
+    <div class="playlist">
+        <div class="playlist__img">
+            <img :src="item.img" />
         </div>
-    </router-link>
+        <p class="playlist__name"> {{ item.name }} </p> 
+        <p class="playlist__desc"> {{ item.description }} </p>
+    </div>
 </template>
 
 <script>
 export default {
-    name: 'Album',
+    name: 'Playlist',
     props: {
         item: Object,
     },
@@ -20,9 +18,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.album {
+.playlist {
     width: auto;
     max-width: 200px;
+    min-width: 200px;
     &__img {
         width: 100%;
         height: 200px;
@@ -38,6 +37,7 @@ export default {
     &__name {
         text-align: left;
         font-size: 22px;
+        line-height: 26px;
         margin: 11px 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -47,6 +47,7 @@ export default {
         -webkit-box-orient: vertical;
     }
     &__desc {
+        font-style: normal;
         font-weight: 500;
         font-size: 18px;
         color: $gray-title;

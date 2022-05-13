@@ -7,7 +7,7 @@ export const auth = {
   namespaced: true,
   state: initialState,
   getters: {
-    getLogged: (state) => state.status.loggedIn
+    getLogged: (state) => state.status.loggedIn,
   },
   actions: {
     login({ commit }, user) {
@@ -37,7 +37,10 @@ export const auth = {
           return Promise.reject(error);
         }
       );
-    }
+    },
+    // refreshToken({ commit }, accessToken) {
+    //   // commit('refreshToken', accessToken);
+    // }
   },
   mutations: {
     loginSuccess(state, user) {
@@ -53,10 +56,14 @@ export const auth = {
       state.user = null;
     },
     registerSuccess(state) {
-      state.status.loggedIn = false;
+      state.status.loggedIn = true;
     },
     registerFailure(state) {
       state.status.loggedIn = false;
+    },
+    refreshToken(state, accessToken) {
+      state.status.loggedIn = true;
+      state.user = { ...state.user, accessToken: accessToken };
     }
   }
 };

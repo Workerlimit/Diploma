@@ -60,6 +60,7 @@ export default {
   position: relative;
 }
 .content {
+  max-width: 100%;
   padding: 25px 40px;
   &__title {
     text-align: left;

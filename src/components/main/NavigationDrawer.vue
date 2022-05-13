@@ -5,56 +5,98 @@
         </div>
         <div class="navigation__menu">
             <ul class="menu">
-                <li class="menu__item" @click="setActiveEl(1)" :class="(active_el == 1) ? 'active' : '' "><router-link to="/">Home</router-link></li>
-                <li class="menu__item" @click="setActiveEl(2)" :class="{active: active_el == 2 }"><router-link to="/library">My Library</router-link></li>
-                <li class="menu__item" @click="setActiveEl(3)" :class="{active: active_el == 3 }"><router-link to="/liked">Liked Songs</router-link></li>
+                <li class="menu__item" :class="{'menu__item--active' : (this.active_el == 1)}" @click="setActiveNav(1)"><router-link exact to="/">Home</router-link></li>
+                <li class="menu__item" :class="{'menu__item--active' : (this.active_el == 2)}" @click="setActiveNav(2)"><router-link to="/library">My Library</router-link></li>
+                <li class="menu__item" :class="{'menu__item--active' : (this.active_el == 3)}" @click="setActiveNav(3)"><router-link to="/liked">Liked Songs</router-link></li>
             </ul>
-            <div class="playlist">
-                <p class="playlist__title"> Playlists </p>
+            <div class="playlist-menu">
+                <p class="playlist-menu__title"> Playlists </p>
                 <ul>
-                    <li><router-link to="#"> Playlist #1 </router-link></li>
-                    <li><router-link to="#"> Playlist #1 </router-link></li>
+                    <li v-for="p in playlists" :key="p.id"><router-link :to="{ name: 'PLaylistDetail', params: { id: 1 }}"> {{ p.title}} </router-link></li>
                 </ul>
+                <button class="create-playlist" @click="showModal">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="22" height="22" fill="#9D9D9D"/>
+                    <path d="M11.6875 10.3125V5.5H10.3125V10.3125H5.5V11.6875H10.3125V16.5H11.6875V11.6875H16.5V10.3125H11.6875Z" fill="black"/>
+                    </svg>
+                    Create playlist
+                </button>
             </div>
+            <Modal v-show="isModalVisible" type="create" @close="closeModal">
+                <template v-slot:header>
+                    Create playlist
+                </template>
+            </Modal>
         </div>
     </div>
 </template>
 
 <script>
 import Logo from "../common/Logo.vue";
-
+import Modal from '../common/Modal.vue';
 export default {
     name: "NavigationDrawer",
     components: {
-        Logo
-    },
-    watch: {
-        active_el: {
-            handler() {
-                if(this.$router.path != "/" && this.$router.path != "/library" && this.$router.path != "/profile" && this.$router.path != "/playlists"){
-                    this.active_el = 0;
-                }
-            }
-        }
+        Logo,
+        Modal
     },
     data() {
-        return {
-            active_el: 0
+        return{
+            active_el: 0,
+            isModalVisible: false,
         }
     },
+    computed: {
+        isLoggedIn: {
+            get: function() {
+                return this.$store.getters['auth/getLogged'];
+            }
+        },
+        playlists: {
+            get: function() {
+                return this.$store.getters['playlist/getPlaylist'];
+            },
+            set: function(newVal) {
+                this.userInfo.name = newVal;
+            }
+        },
+    },
     mounted() {
-        if(this.$route.path == "/") {
-            this.active_el = 1;
-        } else if(this.$route.path == "/library") {
-            this.active_el = 2;
-        } else {
-            this.active_el = 3;
+        if(this.isLoggedIn){
+            this.$store.dispatch('playlist/fetchPlaylist');
+        }
+        this.catchActiveNav();
+    },
+    watch:{
+        "this.$route.path"() {
+            this.catchActiveNav();
         }
     },
     methods: {
-        setActiveEl(index) {
+        setActiveNav(index) {
             this.active_el = index;
-            console.log(this.active_el)
+        },
+        catchActiveNav() {
+            if(this.$route.path == "/") {
+                this.setActiveNav(1);
+            } else if(this.$route.path == "/library") {
+                console.log("nnn")
+                this.setActiveNav(2);
+            } else if(this.$route.path == "/liked") {
+                this.setActiveNav(3);
+            } else {
+            this.setActiveNav(0);
+            }
+        },
+        showModal() {
+            if(this.isLoggedIn){
+                this.isModalVisible = true;
+            } else {
+                this.$router.push("/login");
+            }
+        },
+        closeModal() {
+            this.isModalVisible = false;
         }
     }
 }
@@ -69,6 +111,7 @@ export default {
     height: 100vh;
     background: $light-gray;
     text-align: left;
+    z-index: 500;
     &__logo {
         height: 180px;
     }
@@ -100,7 +143,7 @@ export default {
         }
     }
 }
-.playlist {
+.playlist-menu {
     margin-top: 18px;
     padding-left: 25px;
     &__title {
@@ -113,6 +156,21 @@ export default {
     }
     li + li {
         margin-top: 17px;
+    }
+}
+.create-playlist {
+    outline: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+    font-size: 20px;
+    transition: all 0.4s ease;
+    padding: 0 10px 0 0; 
+    margin-top: 22px;
+    &:hover {
+        cursor: pointer;
+        background: rgb(204, 204, 204);
     }
 }
 </style>

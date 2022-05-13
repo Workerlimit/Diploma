@@ -1,10 +1,7 @@
-import axios from 'axios';
-const API_URL = 'http://localhost:8000/';
-// const API_URL = 'https://enigmatic-temple-06724.herokuapp.com/';
+import api from "./api";
 class AuthService {
   async login(user) {
-    return await axios
-      .post(API_URL + 'login/', {
+    return api.post('login/', {
         email: user.email,
         password: user.password
       })
@@ -19,6 +16,16 @@ class AuthService {
   logout() {
     localStorage.removeItem('user');
   }
-  
+  async register(email, password, name, date, gender) {
+    const body = {
+      "email": email,
+      "name": name,  
+      "date_of_birth": date,
+      "gender": gender,
+      "password": password,
+      "re_password": password,
+    }
+    await api.post('sign-up/', body)
+  }
 }
 export default new AuthService();

@@ -4,6 +4,9 @@ import router from './router';
 import store from "./store";
 import "@/assets/css/variables.scss";
 import "@/assets/css/main.scss";
+import setupInterceptors from './services/setupInterceptors';
+
+setupInterceptors(store);
 
 createApp(App)
     .use(router)

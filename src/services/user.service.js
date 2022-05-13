@@ -1,44 +1,31 @@
-import axios from 'axios';
-// import authHeader from './auth-header';
-const API_URL = 'http://localhost:8000/';
-// const API_URL = 'https://enigmatic-temple-06724.herokuapp.com/';
-
+import api from './api';
+const auth = "JWT " + localStorage.getItem('accessToken')
+const headers = {
+  "Authorization": auth,
+};
 class UserService {
   async getUserBoard() {  
-    const auth = "JWT " + localStorage.getItem('accessToken')
-    const headers = {
-      "Authorization": auth,
-    };
-    const data = await axios.get(API_URL + 'profile/', { headers })
-      .then((response) => { return response.data })
-      .catch(err => {
-        console.log(err)
-      });
-    return data;
+
+    return api.get("profile/", { headers }).then((response) => { return response.data })
+    .catch(err => {
+      console.log(err)
+    });
   }
   async changeUserName(newName) {
-    const auth = "JWT " + localStorage.getItem('accessToken')
-    const headers = {
-      "Authorization": auth,
-    };
     const body = {
       "name": newName
     }
-    return await axios.patch(API_URL + 'profile/', body, { headers })
-      .then((result) => result.data)
+    return api.patch("profile/", body, { headers })
+      .then((response) => response.data)
       .catch((err) => err)
   }
   async changeUserAvatar(newAvatar) {
-    const auth = "JWT " + localStorage.getItem('accessToken')
-    const headers = {
-      "Authorization": auth,
-    };
-    const body = {
-      "avatar": newAvatar
-    }
-    return await axios.patch(API_URL + 'profile/', body, { headers })
-      .then((result) => result.data)
-      .catch((err) => err)
+    return api.patch("profile/", newAvatar, { headers })
+      .then(function() {
+        console.log("success")
+      }).catch(function() {
+        console.log("error")
+      })
   }
 }
 export default new UserService();

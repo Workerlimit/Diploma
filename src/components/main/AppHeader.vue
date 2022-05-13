@@ -10,7 +10,7 @@
                 <router-link v-if="isLoggedIn" to="/profile">
                     <div class="user">
                         <span class="user__name">{{ userInfo.name }}</span>
-                        <Avatar :src="userInfo.avatar" />
+                        <Avatar :img="userInfo.avatar" />
                     </div>
                 </router-link>
                 <router-link v-if="!isLoggedIn" to="/signup">
@@ -41,25 +41,29 @@ export default  {
   data() {
      
   },
-  computed: {
-    userInfo: {
-      get: function() {
-        return this.$store.getters['user/getUser'];
-      }
-    },
+  computed: {  
     isLoggedIn: {
         get: function() {
             return this.$store.getters['auth/getLogged'];
         }
+    },
+    userInfo: {
+      get: function() {
+        return this.$store.getters['user/getUser'];
+      }
     }
   },
-
-methods: {
-  logout() {
-    this.$store.dispatch('auth/logout');
-    this.$router.push("/login");
+  mounted() {
+    if(this.isLoggedIn){ 
+        this.$store.dispatch('user/fetchUser')
+    }
+  },
+  methods: {
+    logout() {
+        this.$store.dispatch('auth/logout');
+        this.$router.push("/login");
+    }
   }
-}
 }
 </script>
 

@@ -56,10 +56,10 @@
                 <div> 
                     <label style="margin-top:25px" class="form__label">What is your gender?</label>
                     <div class="radio">
-                        <input type="radio" id="gender_option_male" name="gender" required="" value="M" aria-invalid="false" class="radio__input" v-model="user.gender">
-                        <label for="gender_option_male" class="radio__label">Male</label>
-                        <input type="radio" id="gender_option_female" name="gender" required="" value="F" aria-invalid="false" class="radio__input" v-model="user.gender">
-                        <label for="gender_option_female" class="radio__label">Female</label>
+                      <input type="radio" id="gender_option_male" name="gender" required="" value="M" aria-invalid="false" class="radio__input" v-model="user.gender">
+                      <label for="gender_option_male" class="radio__label">Male</label>
+                      <input type="radio" id="gender_option_female" name="gender" required="" value="F" aria-invalid="false" class="radio__input" v-model="user.gender">
+                      <label for="gender_option_female" class="radio__label">Female</label>
                     </div>
                 </div>
                 <div class="terms flex">
@@ -67,7 +67,7 @@
                     <label for="terms" class="terms__label">I agree with the <router-link to="/terms" class="terms__link">user terms</router-link></label>
                 </div>
                 <Button class="signup__btn" type="fill" :disabled="!isTermChecked">Sign up for Tyñda</Button>
-                <div class="another">
+                <!-- <div class="another">
                     <span>OR</span>
                     <button class="link">
                         <svg width="148" height="18" viewBox="0 0 148 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +78,7 @@
                             <path d="M137.41 0.5V14H135.283V0.5H137.41Z" fill="#34A853"/>
                         </svg>
                     </button>
-                </div>
+                </div> -->
             </form>
         </div> 
     </div>
@@ -87,7 +87,6 @@
 <script>
 import Logo from "@/components/common/Logo.vue";
 import Button from "@/components/common/Button.vue";
-import axios from "axios";
 
 export default {
   name: "Signup",
@@ -127,9 +126,7 @@ export default {
       get: function() {
         return this.$store.getters['auth/getLogged'];
       },
-      set: function(newVal) {
-        this.loggedIn = newVal;
-      }
+      set(newVal){ this.loggedIn = newVal}
     },
   },
   mounted() {
@@ -157,44 +154,34 @@ export default {
             return false;
         }
     },
-    async register(email, password, name, date, gender) {
-      const body = {
-        email: email,
-        name: name,  
-        "date_of_birth": date,
-        gender: gender,
-        password: password,
-        "re_password": password,
-      }
-      await axios.post('http://localhost:8000/sign-up/', body)
-      .then(response => {
-        this.loggedIn = true;
-        return response;
-      })
-      .catch(error => {
-        this.inputError.email = error.response.data.email[0];
-        this.loggedIn = false;
-        return error.response.data;
-      })
-    },
     convertDateFormat(day, month, year) {
       return `${day}.${month}.${year}`
     },
     submitForm() {
-        let passVal = this.passwordValidation();
-        let emailVal = this.emailValidation();
-        if(passVal && emailVal) {
-            this.user.date = this.convertDateFormat(this.day, this.month, this.year);
-            
-            this.register(this.user.email, this.user.password, this.user.name, this.user.date, this.user.gender)
-            console.log(this.loggedIn)
-
+      let passVal = this.passwordValidation();
+      let emailVal = this.emailValidation();
+      if(passVal && emailVal) {
+        this.user.date = this.convertDateFormat(this.day, this.month, this.year);
+          this.$store.dispatch("auth/register", this.user)
+          .then((response) => {
+            if(response.status == 200 || response.status == 201) {
+              this.loggedIn = true;
+              console.log("success");
+            }
+          })
+          .catch((error) => {
+            console.log(error.response.data)
+            console.log(error);
+            this.inputError.email = error.response.data.email[0];
+            this.loggedIn = false;
+          })
             if(this.loggedIn) {
               this.$router.push("/login");
             }
-        } 
+        // this.register(this.user.email, this.user.password, this.user.name, this.user.date, this.user.gender)
+      } 
     }
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -264,6 +251,9 @@ select {
     }
     &__label {
         margin-left: 15px;
+        &:hover{
+          cursor: pointer;
+        }
     }
     &__link {
         color: $secondary-color;

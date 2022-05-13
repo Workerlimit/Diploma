@@ -1,5 +1,5 @@
 <template>
-    <div class="albums flex flex--space">
+    <div class="albums">
         <Album  v-for="item in albums" :key="item.id" :item="item"/>
     </div>
 </template>
@@ -12,46 +12,15 @@ export default{
     components:{
         Album,
     },
-    data() {
-        return {
-            albums: [
-                {
-                    id: 1, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 2, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 3, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 4, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 5, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 6, 
-                    img: "",
-                    name: "Name",
-                },
-                {
-                    id: 7, 
-                    img: "",
-                    name: "Name",
-                }
-            ]
+    computed: {
+        albums: {
+            get: function() {
+                return this.$store.getters['album/getAlbums']
+            }
         }
+    },
+    mounted() {
+        this.$store.dispatch('album/fetchAlbum');
     }
 }
 </script>
@@ -59,8 +28,11 @@ export default{
 <style lang="scss">
 .albums{
     width: 100%;
-    display: flex;
-    column-gap: 35px;
-    flex-wrap: wrap;
+    // display: flex;
+    // column-gap: 35px;
+    // flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    grid-gap: 35px;
 }
 </style>
