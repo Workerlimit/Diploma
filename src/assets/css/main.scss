@@ -85,3 +85,66 @@ li {
     display: flex;
     align-items: center;
 }
+.playlist-table{ 
+    width: 100%;
+    margin-top: 20px;
+    &__row {
+        display: flex;
+        padding: 8px 10px;
+        height: 40px;
+    }
+    &__id {
+        font-weight: 600;
+        font-size: 20px;
+    }
+    &__cover{
+        width: 58px;
+        height: 58px;
+        border-radius: 2px;
+        margin-right: 12px;
+    }
+    &__item{
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 20px;
+        &--time {
+            color: #979797;
+        }
+    }
+    &__img {
+        img {
+            width: 58px;
+            height: 58px;
+            overflow: hidden;
+            border-radius: 2px;
+            object-fit: cover;
+            margin-right: 12px;
+        }
+    }
+}
+.playlist-hover {
+    height:100%;
+    width: 100%;
+    position: absolute;
+    top: 33%;
+    left: 10px;
+    z-index: 5;
+}
+.playlist-list-item {
+    position: relative;
+    border-radius: 5px;
+    padding: 8px 10px;
+    transition: all 0.3s ease;
+    &:hover, &--active {
+        background: $gray;
+    }
+}
+.album-hover {
+    height:100%;
+    width: 100%;
+    position: absolute;
+    top: 33%;
+    left: 3px;
+    z-index: 4;
+}

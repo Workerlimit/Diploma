@@ -5,6 +5,7 @@ import { playlist } from "./playlist.module";
 import { album } from "./album.module";
 import { artist } from "./artist.module";
 import { track } from "./track.module";
+import { liked } from "./liked-songs.module";
 
 const store = createStore({
   modules: {
@@ -13,7 +14,8 @@ const store = createStore({
     playlist,
     album,
     artist,
-    track
+    track,
+    liked
   },
 });
 export default store;

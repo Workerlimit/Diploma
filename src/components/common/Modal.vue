@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-backdrop">
+  <div class="modal-backdrop" >
     <div class="modal">
       <header class="modal-header">
         <slot name="header"></slot>
@@ -17,9 +17,27 @@
           <label>Name your playlist</label> <br>  
           <input v-model="newPlaylist" type="text" />      
         </div>  
+        <div v-else class="edit flex flex--space">
+          <div class="hover">
+            <div class="edit__img">
+              <img :src="item.cover" />
+            </div>
+            <div class="edit__img--hover">
+                <input class="form-control edit__hidden" ref="fileInput" type="file" @input="pickFile" id="avatar" style="display:none;">
+                <label for="avatar">
+                  <img src="@/assets/icons/hover.svg" />
+                </label>
+            </div>
+          </div>
+          <div class="edit__input">
+            <label>Playlist name</label> <br>  
+            <input v-model="newTitle" type="text" />      
+          </div>
+        </div>  
       </section>
 
       <footer class="modal-footer">
+        <p class="delete" v-if="type != 'create'">Delete playlist</p>
         <Button @click="createPlaylist">Save</Button>
       </footer>
     </div>
@@ -33,24 +51,55 @@ import Button from "./Button.vue";
     components: {
       Button
     },
-    props: {
-      type: {
-        default: ""
-      }
-    },
+    props: ['type', 'id', 'item'],
     data() {
       return {
-        newPlaylist: ""
+        newPlaylist: "",
+        newTitle: ""
       }
     },
     methods: {
       createPlaylist() {
-        this.$store.dispatch("playlist/addPlaylist", this.newPlaylist);
+        console.log(this.type)
+        if(this.type == "create"){
+          this.$store.dispatch("playlist/addPlaylist", this.newPlaylist);
+          // location.reload();
+        } else if(this.type == "edit"){
+          let data = {id: this.id, title: this.newTitle}
+          this.$store.dispatch("playlist/changePlaylistTitle", data);
+        }
         this.close();
       },
       close() {
         this.$emit('close');
       },
+      deletePlaylist(id) {
+        this.$store.dispatch("playlist/deletePlaylist", id)
+      },
+      selectImage () {
+        this.$refs.fileInput.click();
+      },
+      async pickFile () {
+          let input = this.$refs.fileInput
+          let file = input.files
+          if (file && file[0]) {
+              let reader = new FileReader
+              reader.onload = e => {
+                  this.previewImage = e.target.result
+              }
+              reader.readAsDataURL(file[0])
+              let formData = new FormData();
+              formData.append('cover', file[0]);
+              let data = {
+                  id: this.id,
+                  img: formData
+              }
+              await this.$store.dispatch('playlist/changePlaylistCover', data)
+          }
+      },
+      // editPlaylistName() {
+      //   this.$store.dispatch("playlist/editPlaylistTitle", this.)
+      // }
     },
   };
 </script>
@@ -132,11 +181,42 @@ import Button from "./Button.vue";
     cursor: pointer;
     background: transparent;
   }
-
-  .btn-green {
-    color: white;
-    background: #4AAE9B;
-    border: 1px solid #4AAE9B;
-    border-radius: 2px;
+  
+  .edit {
+    &__img{
+      width: 68px;
+      height: 68px;
+      border-radius: 5px;
+      overflow: hidden;
+      &--hover{
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        background: rgba(0, 0, 0, 0.329);
+        width: 100%;
+        height: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    &__input {
+      width: 83%;
+    }
+  }
+  .hover {
+    position: relative;
+    &:hover{
+      .edit__img--hover {
+        opacity: 1;
+      }
+    }
   }
 </style>

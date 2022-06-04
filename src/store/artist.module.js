@@ -2,21 +2,32 @@ import ArtistService from "@/services/artist.service";
 
 export const artist = {
     namespaced: true,
-    state: {
-        artist: [{}]
+    state() {
+        return {
+            artists: [
+                {
+                    id: null,
+                    name: "",
+                    avatar: "",
+                    social_links: null
+                }
+            ]
+        }
     },
     getters: {
-        getArtist: (state) => state.artist
+        getArtists: (state) => state.artists,
+        getArtistById: (state) => (id) => {
+            return state.artists.find(artist => artist.id == id)
+        }
     },
     mutations: {
         setArtist(state, payload) {
-            state.artist = payload;
+            state.artists = payload;
         }
     },
     actions: {
         async fetchArtist(context) {
             const res = await ArtistService.getPublicArtists();
-            console.log(res.data)
             context.commit("setArtist", res.data);
         }
     }

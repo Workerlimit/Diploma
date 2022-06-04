@@ -1,16 +1,13 @@
 <template>
     <div class="album-page">
         <div class="album-page__top">
-            {{albums[this.$route.params.id - 1]}}
-            swdw
-            {{tracks}}
-            <div class="album-page__cover">
-                <!-- <img :src="albums[this.$route.params.id - 1].author.avatar" /> -->
+            <div class="album-page__cover"> 
+                <img :src="albumList.author[0].avatar" />
             </div>
             <div class="album-detail">
                 <p class="album-detail__text">Single</p>
-                <p class="album-detail__name"> {{ albums[this.$route.params.id - 1].name }} </p>
-                    <!-- <p class="playlist-detail__count"> {{ playlist.tracks.length }} </p> -->
+                <p class="album-detail__name"> {{ albumList.name }} </p>
+                <p class="playlist-detail__count"> {{ albumList.author[0].name }} &#8226; </p>
             </div>
         </div>
         <div class="album-page__content">
@@ -23,7 +20,7 @@
                     <div style="width: 45px;">Time</div>
                 </div>
                 <div>
-                    <div v-for="track in tracks" :key="track.id" class="playlist-list-item playlist-table__row" 
+                    <div v-for="(track, index) in trackList" :key="track.id" class="playlist-list-item playlist-table__row" 
                         :class="{'playlist-list-item--active' : activeIndex == track.id}" 
                         @mouseover="selectIndex(track.id)" @mouseleave="itemIndex = null"
                         @click="setActiveTrack(track.id)">
@@ -32,8 +29,8 @@
                         <audio :ref="'element' + track.id" :src="track.file"></audio>
                 
                         <div style="width: 20px;" class="align-center">
-                            <div v-if="itemIndex == track.id || activeIndex == track.id" class="playlist-hover"><PlayButton :width="25" @click="changeTrackState(track.id)" :isPlay="isPlayTrack" /> </div>
-                            <span v-else class="playlist-table__id">{{ track.id }}</span>    
+                            <div v-if="itemIndex == track.id || activeIndex == track.id" class="playlist-hover" style="transform: translateX(-10px)"><PlayButton :width="25" @click="changeTrackState(track.id)" :isPlay="isPlayTrack" /> </div>
+                            <span v-else class="playlist-table__id">{{ index + 1 }}</span>    
                         </div>
                         <div style="width: 32%" class="align-center"> 
                             <div class="playlist-table__item">
@@ -41,8 +38,8 @@
                                 {{ track.title }}
                             </div> 
                         </div>
-                        <!-- <div style="width: 32%" class="align-center"> <span class="playlist-table__item">{{ track.album.author[0].name }} </span></div> -->
-                        <div style="width: 45px" class="align-center"> <span class="playlist-table__item playlist-table__item--time"> <audio id="track-audio"><source :src="track.file">r</audio> </span></div>
+                        <div style="width: 32%" class="align-center"> <span class="playlist-table__item">{{ albumList.author[0].name }} </span></div>
+                        <div style="width: 45px" class="align-center"> <span class="playlist-table__item playlist-table__item--time"> {{duration}} </span></div>
                     </div>
                 </div>
             </div>
@@ -51,6 +48,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import PlayButton from "@/components/common/PlayButton.vue";
 
 export default {
@@ -60,7 +58,6 @@ export default {
     },
     data() {
         return {
-            urlId: 0,
             isPlay: false,
             upHere: false,
             itemIndex: null,
@@ -68,12 +65,12 @@ export default {
             playIndex: null,
             isPlayTrack: false,
             currentTrack: 1,
-            trackList: [],
             trackDuration: 0,
+            duration: 0,
         }
     },
     created() {
-        this.urlId = this.$route.params.playlistId;
+       
     },
     computed: {
         userInfo: {
@@ -81,33 +78,26 @@ export default {
                 return this.$store.getters['user/getUser'];
             }
         },
-        albums: {
-            get: function() {
-                return this.$store.getters['album/getAlbums'];
-            }
+        ...mapGetters({
+            tracks: 'track/getTracksByAlbum',
+            albums: 'album/getAlbumsById'
+        }),
+        albumList() {
+            return this.albums(this.$route.params.id)
         },
-        tracks: {
-            get: function() {
-                return this.$store.getters['track/getTracks'];
-            }
+        trackList() {
+            return this.tracks(this.albumList.name)
         }
     },
-    mounted() {
+    beforeCreate(){
+        this.urlId = this.$route.params.playlistId;
         this.$store.dispatch('album/fetchAlbum');
         this.$store.dispatch('track/fetchTracks');
-        this.getData();
-        let audio = document.getElementById("track-audio")
     },
     methods: {
-        getData() {
-            for(let i = 0; i < this.tracks.length; i++) {
-                if(this.tracks[i].album != null) {
-                    if(this.tracks[i].album == this.albums[this.$route.params.id - 1].name ){
-                        this.trackList.push(this.tracks[i])
-                    }
-                }
-                
-            }
+        getAudioDuration(id) {
+            console.log(this.$refs["element"+id][0]);
+            this.duration = this.$refs["element"+id][0].duration;
         },
         changePlayState() {
             this.isPlay = !this.isPlay;
@@ -133,6 +123,7 @@ export default {
             this.playMusic(id);
         },
         playMusic(id) {
+            this.$store.dispatch('track/changeTrackList', this.trackList);
             if(this.isPlayTrack) {
                 this.$refs["element"+id][0].play();
             } else {
@@ -150,6 +141,7 @@ export default {
 
 .album-page {
     padding: 35px;
+    margin-bottom: 70px;
     &__top {
         display: flex;
         align-items: center;
@@ -160,6 +152,7 @@ export default {
     &__cover {
         border-radius: 10px;
         height: 200px;
+        width: 200px;
         overflow: hidden;
         img {
             width: 100%;
@@ -207,14 +200,6 @@ export default {
             color: #979797;
         }
     }
-}
-.album-hover {
-    height:100%;
-    width: 100%;
-    position: absolute;
-    top: 33%;
-    left: 3px;
-    z-index: 2;
 }
 .album-list-item {
     position: relative;

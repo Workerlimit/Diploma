@@ -1,4 +1,5 @@
 <template>
+<router-link :to="{ name: 'PlaylistDetail', params: { id: this.item.id }}">
     <div class="playlist">
         <div class="playlist__img">
             <img :src="item.img" />
@@ -6,6 +7,7 @@
         <p class="playlist__name"> {{ item.name }} </p> 
         <p class="playlist__desc"> {{ item.description }} </p>
     </div>
+</router-link>
 </template>
 
 <script>

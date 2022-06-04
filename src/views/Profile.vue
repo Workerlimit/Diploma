@@ -1,40 +1,52 @@
 <template>
   <div class="profile">
-    <div class="profile__header">
-      <div class="edit">
-        <Avatar class="edit__avatar" size="large" :img="userInfo.avatar" />
-        <input class="form-control edit__hidden" ref="fileInput" type="file" @input="pickFile">
-      </div>
-      <div class="profile__main">
-        <div class="profile__name" :contenteditable="isEdit" spellcheck="false" @input="onInput">{{ userInfo.name }}</div>
-        <div class="edit-btns">
-          <Button v-if="!isEdit" type="outline" @click="() => this.isEdit = true">Edit profile</Button>
-          <Button v-if="isEdit" type="outline" @click="() => this.isEdit = false">Cancel</Button>
-          <Button v-if="isEdit" @click="setProfile()">Save</Button>
+    <div class="content">
+      <div class="profile__header">
+        <div class="edit">
+          <Avatar class="edit__avatar" size="large" :img="userInfo.avatar" />
+        </div>
+        <div class="profile__main">
+          <div class="profile__name">{{ userInfo.name }}</div>
+          <div class="edit-btns">
+            <router-link to="/settings">
+              <Button type="outline">Edit profile</Button>
+            </router-link>
+          </div>
         </div>
       </div>
-     
+      <div class="content__block" v-if="isShow">
+        <div class="content__top flex flex--space">
+          <p class="content__title">Playlists</p>
+          <button class="see-all-btn" @click="expandBlock()">See All</button>
+        </div>
+        <div class="content__nowrap" :class="{'content__nowrap&#45;&#45;expand' : isExpand}">
+          <Playlists :withLiked="false"/>
+        </div>
+      </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import Avatar from "@/components/common/Avatar.vue";
 import Button from "@/components/common/Button.vue";
+import Playlists from "@/components/playlists/Playlists.vue";
 
 export default {
   name: 'Profile',
   components: {
     Avatar,
-    Button
+    Button,
+    Playlists
   },
   data(){
     return {
       user: null,
       newName: "",
       isEdit: false,
-      previewImage: null
+      previewImage: null,
+      isExpand: false,
+      isShow: false
     }
   },
   computed: {
@@ -46,9 +58,16 @@ export default {
         this.userInfo.name = newVal;
       }
     },
+    playlists: {
+      get: function() {
+        return this.$store.getters['playlist/getPlaylist'];
+      }
+    }
   },
   mounted() {
-    this.$store.dispatch('user/fetchUser')
+    this.$store.dispatch('user/fetchUser');
+    if(this.playlists.length == 0) this.isShow = false;
+    else this.isShow = true;
   },
   methods: {
     onInput(e){
@@ -58,25 +77,8 @@ export default {
       this.$store.dispatch('user/changeUserName', this.userInfo.name);
       this.isEdit = false;
     },
-    selectImage () {
-      this.$refs.fileInput.click()
-    },
-    async pickFile () {
-      let input = this.$refs.fileInput
-      let file = input.files
-      if (file && file[0]) {
-        let reader = new FileReader
-        reader.onload = e => {
-          this.previewImage = e.target.result
-        }
-        reader.readAsDataURL(file[0])
-        this.$emit('input', file[0])
-        let formData = new FormData();
-        formData.append('avatar', file[0]);
-
-        await this.$store.dispatch('user/changeUserAvatar', formData)
-        location.reload();
-      }
+    expandBlock() {
+      this.isExpand = !this.isExpand;
     }
   },
 };
@@ -85,7 +87,7 @@ export default {
 <style lang="scss" scoped>
 .profile {
   &__header {
-    padding: 35px 45px;
+    padding: 35px 45px 60px;
     max-height: 200px;
     display: flex;
     align-items: center;

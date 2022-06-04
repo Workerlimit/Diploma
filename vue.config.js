@@ -11,5 +11,8 @@ module.exports = {
           data: `@import "@/assets/css/variables.scss";`
         },
       }
-    }
+  },
+  options: {
+    hotReload: true
+  }
   }

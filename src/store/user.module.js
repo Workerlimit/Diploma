@@ -24,11 +24,15 @@ export const user = {
         },
         setUserAvatar(state, payload) {
             state.user.avatar = payload;
+        },
+        setUserDate(state, payload) {
+            state.user.date_of_birth = payload;
         }
     },
     actions: {
         async fetchUser(context) {
-            context.commit("setUser", await UserService.getUserBoard());
+            let res = await UserService.getUserBoard();
+            context.commit("setUser", res);
         },
         async changeUserName(context, payload) {
             context.commit("setUserName", payload);
@@ -37,6 +41,10 @@ export const user = {
         async changeUserAvatar(context, payload) {
             context.commit("setUserAvatar", payload)
             await UserService.changeUserAvatar(payload);
+        },
+        async changeUserDate(context, payload) {
+            context.commit("setUserDate", payload)
+            await UserService.changeDateOfBirth(payload)
         }
     }
 }

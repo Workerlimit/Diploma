@@ -1,11 +1,10 @@
 <template>
-    <router-link :to="{ name: 'AlbumDetail', params: { id: 1 }}">
+    <router-link :to="`/albums/${item.id}`">
         <div class="album">
             <div class="album__img">
                 <img :src="item.cover" />
             </div>
-            <p class="album__name"> {{ item }} </p> 
-            <p class="album__desc">{{ item.desc }}</p>
+            <p class="album__name"> {{ item.name }} </p> 
         </div>
     </router-link>
 </template>
@@ -13,9 +12,11 @@
 <script>
 export default {
     name: 'Album',
-    props: {
-        item: Object,
-    },
+    props: ['item'],
+    mounted() {
+
+        this.$route.params.id = this.item.id
+    }
 }
 </script>
 

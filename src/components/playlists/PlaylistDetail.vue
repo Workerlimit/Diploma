@@ -1,17 +1,20 @@
 <template>
     <div class="playlist-page">
         <div class="playlist-page__top">
-            <div class="playlist-page__cover">
-                <img src="@/assets/images/playlist/playlist-cover.png" />
+            <div class="hover">
+                <div class="playlist-page__cover">
+                    <img :src="playlistItem.cover" />
+                </div>
             </div>
             <div class="playlist-detail">
                 <p class="playlist-detail__text">Playlist</p>
-                <p class="playlist-detail__name"> {{ playlist }} </p>
-                <!-- <p class="playlist-detail__text"> {{ userInfo.name }} </p> -->
-                    <!-- <p class="playlist-detail__count"> {{ playlist.tracks.length }} </p> -->
+                <p class="playlist-detail__name"> {{ playlistItem.title }} </p>
+                <span class="playlist-detail__text"> {{ userInfo.name }} &#8226; </span>
+                <span class="playlist-detail__text" style="margin-right: 20px"> {{ playlistItem.tracks.length }} </span>
+                <Button type="outline" @click="showModal">Edit playlist</Button>
             </div>
         </div>
-        <div class="playlist-page__content">
+        <div class="playlist-page__content" v-if="playlistItem.tracks.length != 0">
             <PlayButton @click="changePlayState" :isPlay="isPlay" />
             <div class="playlist-table">
                 <div class="playlist-table__row">
@@ -20,43 +23,60 @@
                     <div style="width: 32%">Album</div>
                     <div style="width: 32%;">Artist</div>
                     <div style="width: 45px;">Time</div>
+                    <div style="width: 20px"></div>
                 </div>
                 <div>
-                    <!-- <div v-for="track in tracks" :key="track.id" class="playlist-list-item playlist-table__row" 
+                    <div v-for="(track, index) in playlistItem.tracks" :key="track.id" class="playlist-list-item playlist-table__row" 
                         :class="{'playlist-list-item--active' : activeIndex == track.id}" 
                         @mouseover="selectIndex(track.id)" @mouseleave="itemIndex = null"
-                        @click="setActiveTrack(track.id)"> -->
-                        
-                            <!-- <PlayButton @click="changeTrackState(track.id)" :isPlay="isPlay" /> -->
-                        <!-- <audio :ref="'element' + track.id" :src="track.file"></audio>
+                        @click="setActiveTrack(track.id)"
+                    >
+            
+                        <audio :ref="'element' + track.id" :src="track.file"></audio>
                 
                         <div style="width: 20px;" class="align-center">
-                            <div v-if="itemIndex == track.id || activeIndex == track.id" class="playlist-hover"><PlayButton :width="25" @click="changeTrackState(track.id)" :isPlay="isPlayTrack" /> </div>
-                            <span v-else class="playlist-table__id">{{ track.id }}</span>    
+                            <div v-if="itemIndex == track.id || activeIndex == track.id" class="playlist-hover" style="transform: translateX(-10px)"><PlayButton :width="25" @click="changeTrackState(track.id)" :isPlay="isPlayTrack" /> </div>
+                            <span v-else class="playlist-table__id">{{ index + 1 }}</span>    
                         </div>
                         <div style="width: 32%" class="align-center"> 
-                            <div class="playlist-table__item">
-                                <img class="playlist-table__cover" :src="track.album.cover"/>
-                                {{ track.title }}
+                            <div class="playlist-table__item  playlist-table__img">
+                                <img :src="track.album.cover" />
+                                <span>{{ track.title }}</span>
                             </div> 
                         </div>
-                        <div style="width: 32%" class="align-center"> <span class="playlist-table__item"> {{ track.album.name }} </span></div>
-                        <div style="width: 32%" class="align-center"> <span class="playlist-table__item">{{ track.album.artist }} </span></div>
-                        <div style="width: 45px" class="align-center"> <span class="playlist-table__item playlist-table__item--time">3:05 </span></div>
-                    </div> -->
+                        <div style="width: 32%" class="align-center"> 
+                            <span class="playlist-table__item">{{ track.album.name }} </span>
+                        </div>
+                        <div style="width: 32%" class="align-center"> <span class="playlist-table__item">{{ track.album.author[0].name }} </span></div>
+                        <div style="width: 45px" class="align-center"> <span class="playlist-table__item playlist-table__item--time"> 000 </span></div>
+                        <div class="align-center" @click="detail">&#8226;&#8226;&#8226;</div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div v-else>
+            <p class="empty">There’s no music in the playlist</p>
+        </div>
+        <Modal v-show="isModalVisible" type="edit" :id="playlistItem.id" :item="playlistItem" @close="closeModal">
+            <template v-slot:header>
+                Playlist details
+            </template>
+        </Modal>
     </div>
 </template>
 
 <script>
 import PlayButton from "@/components/common/PlayButton.vue";
+import Button from "@/components/common/Button.vue";
+import Modal from "@/components/common/Modal.vue";
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'PlaylistDetail',
     components: {
-        PlayButton
+        PlayButton,
+        Button,
+        Modal
     },
     data() {
         return {
@@ -68,13 +88,14 @@ export default {
             activeIndex: null,
             playIndex: null,
             isPlayTrack: false,
-            currentTrack: 1
+            currentTrack: 1,
+            isModalVisible: false,
+            isOpened: false
         }
     },
     props:["id"],
     created() {
-        this.urlId = this.$route.params.playlistId;
-        // this.tracks = this.playlist.tracks;
+        this.urlId = this.$route.params.id;
         
     },
     computed: {
@@ -88,16 +109,16 @@ export default {
                 return this.$store.getters['user/getUser'];
             }
         },
-        playlist: {
-            get: function() {
-                return this.$store.getters['playlist/getOnePlaylist', this.$route.params.id];
-            }
+        ...mapGetters({
+            playlist: 'playlist/getPlaylistById'
+        }),
+        playlistItem() {
+            return this.playlist(this.$route.params.id)
         },
-        
     },
     mounted() {
         if(this.isLoggedIn){
-            this.$store.dispatch('playlist/getOnePlaylist', this.$route.params.id)
+            this.$store.dispatch('playlist/fetchPlaylist')
         }
     },
     methods: {
@@ -133,6 +154,15 @@ export default {
         },
         selectIndex(index) { 
             this.itemIndex = index;
+        },
+        showModal() {
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        },
+        detail(){
+
         }
     }
 }
@@ -152,7 +182,9 @@ export default {
     &__cover {
         border-radius: 10px;
         height: 200px;
+        width: 200px;
         overflow: hidden;
+        position: relative;
         img {
             width: 100%;
             height: 100%;
@@ -173,48 +205,19 @@ export default {
         line-height: 112px;
     }
 }
-.playlist-table{ 
-    width: 100%;
-    margin-top: 20px;
-    &__row {
-        display: flex;
-        padding: 8px 10px;
-    }
-    &__id {
-        font-weight: 600;
-        font-size: 20px;
-    }
-    &__cover{
-        width: 58px;
-        height: 58px;
-        border-radius: 2px;
-        margin-right: 12px;
-    }
-    &__item{
-        display: flex;
-        align-items: center;
-        font-weight: 500;
-        font-size: 20px;
-        &--time {
-            color: #979797;
-        }
-    }
+.empty {
+    font-weight: 600;
+    font-size: 24px;
+    color: #898989;
+    margin-top: 50px;
+    text-align: center;
 }
-.playlist-hover {
-    height:100%;
-    width: 100%;
-    position: absolute;
-    top: 33%;
-    left: 3px;
-    z-index: 2;
-}
-.playlist-list-item {
+.hover{
     position: relative;
-    border-radius: 5px;
-    padding: 8px 10px;
-    transition: all 0.3s ease;
-    &:hover, &--active {
-        background: $gray;
+    &:hover{
+        .playlist-page__cover-hover{
+            opacity: 1;
+        }
     }
 }
 </style>

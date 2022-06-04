@@ -6,6 +6,8 @@
 
 <script>
 import Artist from "./Artist.vue";
+import { mapGetters } from 'vuex';
+
 
 export default {
     name: "Artists",
@@ -13,11 +15,12 @@ export default {
         Artist,
     },
     computed: {
-        artists: {
-            get: function() {
-                return this.$store.getters['artist/getArtist']
-            }
-        }
+        ...mapGetters({
+            artist: 'artist/getArtists',
+        }),
+        artists() {
+            return this.artist;
+        },
     },
     mounted() {
         this.$store.dispatch('artist/fetchArtist')

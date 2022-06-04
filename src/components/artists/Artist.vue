@@ -1,18 +1,18 @@
 <template>
-    <div class="artist">
-        <div class="artist__img">
-            <img :src="item.avatar" />
+    <router-link :to="`/artists/${item.id}`">
+        <div class="artist">
+            <div class="artist__img">
+                <img :src="item.avatar" />
+            </div>
+            <p class="artist__name"> {{ item.name }} </p> 
         </div>
-        <p class="artist__name"> {{ item.name }} </p> 
-    </div>
+    </router-link>
 </template>
 
 <script>
 export default {
     name: "Artist",
-    props: {
-        item: Object,
-    },
+    props: ['item', 'id']
 }
 </script>
 

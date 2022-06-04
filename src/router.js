@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Home from "./views/Home.vue";
 import Main from "./views/Main.vue";
+import store from "@/store/index.js";
 
 const routes = [
   {
@@ -14,8 +15,8 @@ const routes = [
         component: Home,
       },
       {
-        path: "/playlist/:id/details",
-        name: "PLaylistDetail",
+        path: "/playlist/:id",
+        name: "PlaylistDetail",
         meta: {
           requiresAuth: true,
         },
@@ -24,11 +25,18 @@ const routes = [
           import("@/components/playlists/PlaylistDetail.vue"),
       },
       {
-        path: "/albums/:id/details",
+        path: "/albums/:id",
         name: "AlbumDetail",
         props: true,
         component: () =>
           import("@/components/albums/AlbumDetail.vue"),
+      },
+      {
+        path: "/artists/:id",
+        name: "ArtistDetail",
+        props: true,
+        component: () =>
+          import("@/components/artists/ArtistDetail.vue"),
       },
       {
         path: "/library",
@@ -56,6 +64,15 @@ const routes = [
         },
         component: () =>
           import("@/views/Profile.vue"),
+      },
+      {
+        path: "/settings",
+        name: "Settings",
+        meta: {
+          requiresAuth: true,
+        },
+        component: () =>
+          import("@/views/Settings.vue"),
       },
     ]
   },
@@ -88,6 +105,12 @@ router.beforeEach((to, from, next) => {
   const publicPages = ['/login', '/signup', '/', '/reset-password'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('user');
+  console.log(store.getters['auth/getLogged'])
+  if (!store.getters['auth/getLogged'] && authRequired) {
+    return next({
+      path: "/login",
+    });
+  }
   if (authRequired && loggedIn == null) {
     return next({
       path: "/login",

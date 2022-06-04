@@ -5,6 +5,9 @@
             <span class="logo-text">Tyñda</span>
         </div>
         <div class="signup__content">
+            <div class="success-msg" v-if="isRegistered">
+              <p>Please, check your email to verify account</p>
+            </div>
             <p class="signup__title">Sign up with your email address</p>
             <form class="form" @submit.prevent="submitForm">
                 <div>
@@ -112,7 +115,8 @@ export default {
       inputError: {
         email: "",
         password: "",
-      }
+      },
+      isRegistered: false,
     };
   },
   watch: {
@@ -166,17 +170,18 @@ export default {
           .then((response) => {
             if(response.status == 200 || response.status == 201) {
               this.loggedIn = true;
-              console.log("success");
+              this.isRegistered = true;
             }
           })
           .catch((error) => {
-            console.log(error.response.data)
-            console.log(error);
             this.inputError.email = error.response.data.email[0];
             this.loggedIn = false;
           })
+          this.isRegistered = true;
             if(this.loggedIn) {
-              this.$router.push("/login");
+              this.$nextTick(()=> {
+                this.$router.push("/login");
+              })
             }
         // this.register(this.user.email, this.user.password, this.user.name, this.user.date, this.user.gender)
       } 
@@ -198,6 +203,7 @@ export default {
     &__content {
         width: 450px;
         margin: 0 auto;
+        position: relative;
     }
     &__btn {
         font-size: 20px;
@@ -280,5 +286,17 @@ select {
       font-size: 14px !important;
       margin-left: 5px;
     }
+}
+.success-msg {
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  background: rgb(132, 255, 123);
+  position: absolute;
+  color: rgb(0, 0, 0);
+  p {
+    margin-top: 20px;
+    font-size: 20px;
+  }
 }
 </style>

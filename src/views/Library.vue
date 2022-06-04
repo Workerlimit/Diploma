@@ -60,7 +60,7 @@ export default {
     justify-content: space-between;
   }
   &__content {
-    margin-top: 65px;
+    margin: 65px 0;
     display: flex;
   }
 }

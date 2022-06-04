@@ -3,12 +3,18 @@ import PlaylistService from "@/services/playlist.service";
 export const playlist = {
     namespaced: true,
     state: {
-        playlists: [{}],
-        playlist: {}
+        playlists: [{
+            id: null,
+            title: "",
+            tracks: null,
+            cover: ""
+        }],
     },
     getters: {
         getPlaylist: (state) => state.playlists,
-        getOnePlaylist: (state) => state.playlist,
+        getPlaylistById: (state) => (id) => {
+            return state.playlists.find(playlist => playlist.id == id)
+        }
     },
     mutations: {
         ADD_PLAYLIST(state, playlist) {
@@ -17,9 +23,14 @@ export const playlist = {
         SET_PLAYLIST(state, playlists) {
             state.playlists = playlists;
         },
-        CURRENT_PLAYLIST(state, id) {
-            let playlist = state.playlists[id];
-            state.playlist = playlist;
+        SET_PLAYLIST_TITLE(state, payload) {
+            state.playlists.find(x => x.id == payload.id).title = payload.title;
+        },
+        SET_PLAYLIST_COVER(state, payload) {
+            state.playlists.find(x => x.id == payload.id).cover = payload.img;
+        },
+        DELETE_PLAYLIST(state, payload) {
+            state.playlists.splice(payload, 1);
         }
     },
     actions: {
@@ -28,34 +39,32 @@ export const playlist = {
             commit('SET_PLAYLIST', data.data);
         },
         async addPlaylist({ commit }, playlist) {
+            console.log("CREATE")
             const res = await PlaylistService.createPlaylist(playlist).then(
                 response => {
                     commit('ADD_PLAYLIST', res.data);
                     return Promise.resolve(response);
                 },
                 error => {
-                    console.log("Hrhrhr")
                     return Promise.reject(error);
                 }
             );
         },
-        getOnePlaylist({ commit }, id) {
-            console.log(id);
-            commit('CURRENT_PLAYLIST', id);
+        async changePlaylistTitle(context, payload) {
+            context.commit("SET_PLAYLIST_TITLE", payload);
+            await PlaylistService.editPlaylistTitle(payload.id, payload.title)
+        },
+        async changePlaylistCover(context, payload) {
+            context.commit("SET_PLAYLIST_COVER", payload)
+            await PlaylistService.changePlaylistCover(payload.id, payload.img);
+        },
+        async deletePlaylist(context, payload) {
+            context.commit('DELETE_PLAYLIST', payload);
+            await PlaylistService.deletePlaylist(payload);
         }
-        // async fetchPlaylist({ commit }, data) {
-        //     try {
-        //     //   const fields = "uri, name, type, images, description, owner, followers";
-        //     //   const response = await api.spotify.playlists.getPlaylist(
-        //     //     data.userID,
-        //     //     data.playlistID,
-        //     //     fields
-        //     //   );
-        //       const d = await PlaylistService.getAllPlaylists();
-        //       commit("SET_PLAYLIST", d);
-        //     } catch (e) {
-        //       console.log(e);
-        //     }
+        // async getOnePlaylist({ commit }, id) {
+        //     const data = await PlaylistService.getOnePlaylist(id);
+        //     commit
         // }
     }
 }

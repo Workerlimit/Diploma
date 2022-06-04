@@ -9,10 +9,14 @@
                 <li class="menu__item" :class="{'menu__item--active' : (this.active_el == 2)}" @click="setActiveNav(2)"><router-link to="/library">My Library</router-link></li>
                 <li class="menu__item" :class="{'menu__item--active' : (this.active_el == 3)}" @click="setActiveNav(3)"><router-link to="/liked">Liked Songs</router-link></li>
             </ul>
-            <div class="playlist-menu">
+            <div class="playlist-menu" v-if="playlistItems.title !== null">
                 <p class="playlist-menu__title"> Playlists </p>
-                <ul>
-                    <li v-for="p in playlists" :key="p.id"><router-link :to="{ name: 'PLaylistDetail', params: { id: 1 }}"> {{ p.title}} </router-link></li>
+                <ul v-if="playlistItems.title !== null">
+                    <li v-for="p in playlistItems" :key="p.id">
+                        <router-link :to="`/playlist/${p.id}`">
+                            {{p.title}} 
+                        </router-link>
+                    </li>
                 </ul>
                 <button class="create-playlist" @click="showModal">
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,16 +38,21 @@
 <script>
 import Logo from "../common/Logo.vue";
 import Modal from '../common/Modal.vue';
+import { mapGetters } from 'vuex';
+
+
 export default {
     name: "NavigationDrawer",
     components: {
         Logo,
         Modal
     },
+    props: ['id'],
     data() {
         return{
             active_el: 0,
             isModalVisible: false,
+            playlistId: null,
         }
     },
     computed: {
@@ -52,19 +61,19 @@ export default {
                 return this.$store.getters['auth/getLogged'];
             }
         },
-        playlists: {
-            get: function() {
-                return this.$store.getters['playlist/getPlaylist'];
-            },
-            set: function(newVal) {
-                this.userInfo.name = newVal;
-            }
+        ...mapGetters({
+            playlist: 'playlist/getPlaylist',
+        }),
+        playlistItems() {
+            return this.playlist;
         },
     },
-    mounted() {
+    beforeMount(){
         if(this.isLoggedIn){
             this.$store.dispatch('playlist/fetchPlaylist');
         }
+    },
+    mounted(){
         this.catchActiveNav();
     },
     watch:{
@@ -85,7 +94,8 @@ export default {
             } else if(this.$route.path == "/liked") {
                 this.setActiveNav(3);
             } else {
-            this.setActiveNav(0);
+                console.log("Grgr")
+                this.setActiveNav(0);
             }
         },
         showModal() {
@@ -111,7 +121,7 @@ export default {
     height: 100vh;
     background: $light-gray;
     text-align: left;
-    z-index: 500;
+    z-index: 20;
     &__logo {
         height: 180px;
     }

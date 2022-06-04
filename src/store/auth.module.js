@@ -1,28 +1,64 @@
 import AuthService from '../services/auth.service';
 const user = JSON.parse(localStorage.getItem('user'));
-const initialState = user
-  ? { status: { loggedIn: true }, user }
-  : { status: { loggedIn: false }, user: null };
 export const auth = {
   namespaced: true,
-  state: initialState,
+  state() {
+    return {
+      loggedIn: user != null ? true : false,
+      status: 0
+    }
+  },
   getters: {
-    getLogged: (state) => state.status.loggedIn,
+    getLogged: (state) => state.loggedIn,
+    getStatus: (state) => state.status
+  },
+  mutations: {
+    LOGIN(state, status) {
+      state.loggedIn = status;
+      state.status = 200;
+
+    },
+    loginFailure(state) {
+      state.loggedIn = false;
+      state.status = 401;
+      state.user = null;
+    },
+    logout(state) {
+      state.loggedIn = false;
+      this.user = null;
+    },
+    registerSuccess(state) {
+      state.loggedIn = true;
+    },
+    registerFailure(state) {
+      state.loggedIn = false;
+    },
+    refreshToken(state, accessToken) {
+      state.loggedIn = true;
+      state.user = { ...state.user, accessToken: accessToken };
+    }
   },
   actions: {
-    login({ commit }, user) {
-      return AuthService.login(user).then(
-        user => {
-          commit('loginSuccess', user);
-          return Promise.resolve(user);
-        },
-        error => {
-          commit('loginFailure');
-          return Promise.reject(error);
-        }
-      );
+    async login({commit}, data) {
+      const st = await AuthService.login(data);
+      if(st == 200) {
+        commit("LOGIN", true);
+      } else if (st == 401) {
+        commit("loginFailure")
+        return;
+      }
+      //     .then(
+      //   response => {
+      //     console.log(response)
+      //     commit("LOGIN", true);
+      //     return Promise.resolve(response);
+      //   },
+      //   error => {
+      //     return Promise.reject(error);
+      //   }
+      // )
     },
-    logout({ commit }) {
+    logout({commit}) {
       AuthService.logout();
       commit('logout');
     },
@@ -42,28 +78,4 @@ export const auth = {
     //   // commit('refreshToken', accessToken);
     // }
   },
-  mutations: {
-    loginSuccess(state, user) {
-      state.status.loggedIn = true;
-      state.user = user;
-    },
-    loginFailure(state) {
-      state.status.loggedIn = false;
-      state.user = null;
-    },
-    logout(state) {
-      state.status.loggedIn = false;
-      state.user = null;
-    },
-    registerSuccess(state) {
-      state.status.loggedIn = true;
-    },
-    registerFailure(state) {
-      state.status.loggedIn = false;
-    },
-    refreshToken(state, accessToken) {
-      state.status.loggedIn = true;
-      state.user = { ...state.user, accessToken: accessToken };
-    }
-  }
 };

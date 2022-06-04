@@ -5,7 +5,7 @@
                 <span>Liked Songs</span>
             </div>
         </router-link>
-        <Playlist  v-for="item in playlists" :key="item.id" :item="item"/>
+        <Playlist v-for="item in playlists" :key="item.id" :item="item"/>
     </div>
 </template>
 
@@ -22,6 +22,16 @@ export default{
             type: Boolean,
             default: false
         }
+    },
+    computed: {
+        playlists: {
+            get: function() {
+                return this.$store.getters['playlist/getPlaylist']
+            }
+        }
+    },
+    mounted() {
+        this.$store.dispatch('playlist/fetchPlaylist')
     }
 }
 </script>
@@ -32,9 +42,6 @@ export default{
     display: flex;
     column-gap: 35px;
     flex-wrap: wrap;
-    // display: grid;
-    // grid-template-columns: repeat(7, auto);
-    // grid-gap: 35px;
 }
 .library-liked {
     width: 395px;

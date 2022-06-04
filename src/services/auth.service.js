@@ -1,20 +1,20 @@
 import api from "./api";
 class AuthService {
-  async login(user) {
-    return api.post('login/', {
-        email: user.email,
-        password: user.password
+  async login(data) {
+    const res = await api.post('login/', {
+        email: data.email,
+        password: data.pass
       })
-      .then(response => {
-        if (response.data.access) {
-          localStorage.setItem('user', JSON.stringify(response.data));
-          localStorage.setItem('accessToken', response.data.access);
-        }
-        return response.data;
-      });
+    if(res.status == 200) {
+      localStorage.setItem('user', JSON.stringify(res.data));
+      localStorage.setItem('accessToken', res.data.access);
+      localStorage.setItem('refreshToken', res.data.refresh);
+    }
+    return res.status;
   }
   logout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
   }
   async register(email, password, name, date, gender) {
     const body = {
